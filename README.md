@@ -1,6 +1,8 @@
 
 # Overview
-This project is a backend for a telecom application built using Node.js, TypeScript, and MongoDB. It provides essential APIs to handle telecommunications-related functionalities. The backend is structured to be scalable and maintainable, with modern practices and tools. Additionally, It provides various endpoints for processing billing, messages, handling user data, and managing network-related requests. The chatbot functionality, however, is implemented on the frontend, with the backend offering a controller to interact with the bot.
+
+MongoDB. It provides essential APIs to handle telecommunications-related functionalities. The backend is structured to be scalable and maintainable, with modern practices and tools. Additionally, a chatbot was manually built due to issues with the eliza-framework, and the project has been Dockerized for easier deployment and scaling.
+ The chatbot functionality, however, is implemented on the frontend, with the backend offering a controller to interact with the bot.
 
 
 
