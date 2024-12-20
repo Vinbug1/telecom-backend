@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleUserMessage, addBotResponse, getUnknownMessages } from '../controllers/BotController';
+import { handleUserMessage, addBotResponse, getUnknownMessages } from '../controllers/ElizaBotController';
 
 const botRouter: Router = Router();
 

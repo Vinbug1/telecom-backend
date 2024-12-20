@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: telecom-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/telecom
+      - PORT=3000
+      - SECRET_KEY=your-secret-key
+    depends_on:
+      - mongo
+    networks:
+      - telecom-network
+    restart: unless-stopped
+
+  mongo:
+    container_name: telecom-mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - telecom-network
+    restart: unless-stopped
+
+networks:
+  telecom-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

@@ -5,8 +5,9 @@ import axios from 'axios';
 import Ticket from '../models/Ticket'; // Import your Ticket model
 import Billing from '../models/Bill'; // Import your Billing model
 
+
 // Path to your training data (we're using trainingdata.json now)
-const trainingDataFile = path.resolve(__dirname, '../utils/trainingdata.json');
+const trainingDataFile = path.resolve(__dirname, '../utils/elizaresponse.json');
 let expectingBillingDetails = false;
 let processedMessages = new Set();
 
