@@ -1,5 +1,4 @@
-import express from 'express';
-import { Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import UserController from '../controllers/UserController';
 
 const router = express.Router();
@@ -12,6 +11,10 @@ router.post('/register', (req: Request, res: Response) => {
 // Login a user
 router.post('/login', (req: Request, res: Response) => {
     UserController.login(req, res);
+});
+
+router.get('/', (req: Request, res: Response) => {
+    UserController.getAllUsers(req, res);
 });
 
 // Get user by ID

@@ -4,7 +4,7 @@ import BillController from '../controllers/BillController';
 const router = express.Router();
 
 // Create a new billing record
-router.post('/create', (req: Request, res: Response) => {
+router.post('/', (req: Request, res: Response) => {
     BillController.createBillingRecord(req, res);
 });
 

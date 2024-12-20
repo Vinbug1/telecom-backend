@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleUserMessage, addBotResponse, updateBotResponse, respondToUserMessage, generateTicket } from '../controllers/BotController'; // Adjust the import path if necessary
+import { handleUserMessage, addBotResponse, getUnknownMessages } from '../controllers/BotController';
 
 const botRouter: Router = Router();
 
@@ -9,13 +9,7 @@ botRouter.post('/message', handleUserMessage);
 // Route to add a new response to the bot
 botRouter.post('/add', addBotResponse);
 
-// Route to update an existing bot response for a message
-botRouter.put('/update-response/:message', updateBotResponse);
-
-// Route to respond to a user's message
-botRouter.post('/respond-to-message', respondToUserMessage); 
-
-// New route for ticket generation
-botRouter.post('/generate-ticket', generateTicket);
+// Route to get unknown messages
+botRouter.get('/unknown', getUnknownMessages);
 
 export default botRouter;

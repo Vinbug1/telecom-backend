@@ -14,7 +14,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // Get a single ticket by ID
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:userId', (req: Request, res: Response) => {
     TicketController.getTicketById(req, res);
 });
 

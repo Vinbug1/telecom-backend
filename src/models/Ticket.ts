@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 
 export interface ITicket extends Document {
-    userId: string;
-    derciption: string;
+    userId: { type: String, required: true },  // Remove the 'unique' constraint here
+    description: string;
     status: 'open' | 'closed' | 'pending';
     createdAt: Date;
     updatedAt: Date;
@@ -11,12 +11,11 @@ export interface ITicket extends Document {
 const TicketSchema: Schema<ITicket> = new Schema({
     userId: {
         type: String,
-        required: [true, 'User ID is required'],
-        trim: true,
+        required: true,
     },
-    derciption: {
-        type: String,
-        required: [true, 'description is required'],
+    description: {
+        type: String,  // Fixed spelling here
+        required: true,
         trim: true,
     },
     status: {
@@ -28,6 +27,7 @@ const TicketSchema: Schema<ITicket> = new Schema({
     timestamps: true,
     versionKey: false,
 });
+
 
 const Ticket: Model<ITicket> = mongoose.model<ITicket>('Ticket', TicketSchema);
 

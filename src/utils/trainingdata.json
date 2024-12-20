@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "message": "hello",
+    "response": "Hi there! How can I assist you today?"
+  },
+  {
+    "id": 2,
+    "message": "help",
+    "response": "Sure, I am here to help. What do you need assistance with?"
+  },
+  {
+    "id": 3,
+    "message": "can you guide me on this",
+    "response": "guide you on what"
+  },
+  {
+    "id": 4,
+    "message": "hi",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "id": 5,
+    "message": "guys",
+    "response": "Hi budy"
+  },
+  {
+    "id": 6,
+    "message": "school",
+    "response": "Home work for sure"
+  },
+  {
+    "message": "can you get my region network",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "network",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "network status",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "Nigeria",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "guy",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "yes",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "Niger, 3000.00, Pending, child support",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "bill",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "Can you guide me",
+    "response": "I'm sorry, I don't have an answer to that."
+  },
+  {
+    "message": "can you guide on this",
+    "response": "I'm sorry, I don't have an answer to that."
+  }
+]
