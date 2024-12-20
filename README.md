@@ -1,4 +1,4 @@
-README for Telecom Backend Project
+
 # Overview
 This project is a backend for a telecom application built using Node.js, TypeScript, and MongoDB. It provides essential APIs to handle telecommunications-related functionalities. The backend is structured to be scalable and maintainable, with modern practices and tools. Additionally, It provides various endpoints for processing billing, messages, handling user data, and managing network-related requests. The chatbot functionality, however, is implemented on the frontend, with the backend offering a controller to interact with the bot.
 
