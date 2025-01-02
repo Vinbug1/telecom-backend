@@ -2,7 +2,7 @@
   {
     "id": 1,
     "message": "hello",
-    "response": "Hi there! How can I assist you today?"
+    "response": "Hi"
   },
   {
     "id": 2,
@@ -17,7 +17,7 @@
   {
     "id": 4,
     "message": "hi",
-    "response": "I'm sorry, I don't have an answer to that."
+    "response": "hello"
   },
   {
     "id": 5,
@@ -39,7 +39,7 @@
   },
   {
     "message": "network status",
-    "response": "I'm sorry, I don't have an answer to that."
+    "response": "Restart you device"
   },
   {
     "message": "Nigeria",
