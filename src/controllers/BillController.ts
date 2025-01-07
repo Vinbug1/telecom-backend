@@ -11,97 +11,51 @@ class BillController {
             console.log("Received payload:", req.body);
     
             const { userId, billingAddress, amount, status, description } = req.body;
-    
-            console.log("userId:", userId);
-            console.log("billingAddress:", billingAddress);
-            console.log("amount:", amount);
-            console.log("status:", status);
-    
-            // Validate required fields
-            if (!userId || !billingAddress || !amount || !status || !description) {
-                console.error("Validation error: Missing required fields");
-                return res.status(400).json({
-                    message: "Missing required fields",
-                });
-            }
-    
-            // Validate status field
-            const validStatuses = ['open', 'paid', 'unpaid', 'pending'];
-            if (!validStatuses.includes(status)) {
-                console.error("Validation error: Invalid status value");
-                return res.status(400).json({
-                    message: "Invalid status value. Allowed values are: 'open', 'paid', 'unpaid', 'pending'.",
-                });
-            }
-    
-            // Check if a billing record already exists with the same userId and description
-            const existingBilling = await Billing.findOne({ userId, description });
-            if (existingBilling) {
-                console.log("Billing record already exists.");
-                return res.status(400).json({
-                    message: "Billing record already exists",
-                });
-            }
-    
-            // Check if a ticket already exists for the same user and description
-            const existingTicket = await Ticket.findOne({ userId, description: `Billing record created: ${description}` });
-            if (existingTicket) {
-                console.log("Ticket already exists.");
-                return res.status(400).json({
-                    message: "Ticket already exists",
-                });
-            }
-    
-            // Create the ticket only if it doesn't exist
-            const newTicket = new Ticket({
-                userId,
-                description: `Billing record created: ${description}`,
-                status: 'open',
-            });
-    
-            const savedTicket = await newTicket.save();
-            if (!savedTicket) {
-                console.log("Failed to create ticket.");
-                return res.status(500).json({
-                    message: "Failed to create ticket",
-                });
-            }
-            console.log("Ticket created successfully:", savedTicket);
-    
-            // Create the billing record
-            const newBilling = new Billing({
-                userId,
-                billingAddress,
-                amount,
-                status,
-                description,
-                ticketId: savedTicket._id,  // Associate the ticket with the billing record
-            });
-    
-            // Save the billing record and ensure it is only created once
-            const savedBilling = await newBilling.save();
-            if (!savedBilling) {
-                console.log("Failed to save billing record.");
-                return res.status(500).json({
-                    message: "Failed to save billing record",
-                });
-            }
-    
-            console.log("Billing record successfully saved:", savedBilling);
-    
-            // Return success response with both the billing and ticket
-            return res.status(201).json({
-                message: "Billing record and ticket created successfully!",
-                data: { billing: savedBilling, ticket: savedTicket },
-            });
-    
-        } catch (error: any) {
-            console.error("Error creating billing record:", error);
-            return res.status(500).json({
-                message: "Error creating billing record",
-                error: error.message,
-            });
-        }
+     // Validate input fields
+     if (!userId || !billingAddress || !amount || !status || !description) {
+      throw new Error("Missing required fields: Ensure all fields are provided.");
+  }
+
+  // Check if a ticket for the same user already exists (optional, based on your use case)
+  const existingTicket = await Ticket.findOne({ userId, description: `Billing record created: ${description}`, status: 'open' });
+
+  if (existingTicket) {
+      console.log("A ticket for this billing already exists.");
+      return res.status(400).json({
+          message: "A billing record with the same details already exists.",
+          data: { ticket: existingTicket },
+      });
+  }
+
+  // Create and save a new ticket
+  const newTicket = new Ticket({
+      userId,
+      description: `Billing record created: ${description}`,
+      status: 'open',
+  });
+  const savedTicket = await newTicket.save();
+
+  // Create and save the billing record
+  const newBilling = new Billing({
+      userId,
+      billingAddress,
+      amount,
+      status,
+      description,
+      ticketId: savedTicket._id,
+  });
+  const savedBilling = await newBilling.save();
+
+  // Return success message and data
+  return res.status(200).json({
+      message: "Billing record and ticket created successfully!",
+      data: { billing: savedBilling, ticket: savedTicket },
+  });
+} catch (error) {
+  console.error("Error creating billing record:", error);
+  res.status(500).json({ response: 'Error creating the billing record.' });
+  throw error; // Propagate the error to the caller for further handling
+}
     }
     
 
@@ -282,6 +236,49 @@ class BillController {
             });
         }
     }
+
+    // Delete a billing record and its associated ticket by userId
+    static async deleteBillingRecord(req: Request, res: Response): Promise<Response> {
+      try {
+          const billingId = req.params.billingId; // Retrieve billing ID from request parameters
+    
+          if (!billingId) {
+              return res.status(400).json({
+                  message: 'Billing ID is required',
+              });
+          }
+    
+          // Find the billing record by its ID
+          const billingRecord = await Billing.findById(billingId);
+          if (!billingRecord) {
+              return res.status(404).json({
+                  message: 'Billing record not found',
+              });
+          }
+    
+          // Find the associated ticket for this billing record
+          const ticket = await Ticket.findById(billingRecord.ticketId);
+          if (ticket) {
+              // Optionally delete the associated ticket if needed
+              await ticket.deleteOne();
+          }
+    
+          // Delete the billing record
+          await billingRecord.deleteOne();
+    
+          return res.status(200).json({
+              message: 'Billing record and associated ticket deleted successfully',
+          });
+      } catch (error: any) {
+          console.error('Error deleting billing record:', error);
+          return res.status(500).json({
+              message: 'Error deleting billing record',
+              error: error.message,
+          });
+      }
+    }
+    
+
 }
 
 export default BillController;

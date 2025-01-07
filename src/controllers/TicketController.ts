@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Ticket from '../models/Ticket';
 import User from '../models/User'; // Assuming you have a User model
+import mongoose from "mongoose";
 
 class TicketController {
     // Create a new ticket
@@ -87,18 +88,28 @@ static async getTicketById(req: Request, res: Response): Promise<Response> {
     }
 
     // Delete a ticket
-    static async deleteTicket(req: Request, res: Response): Promise<Response> {
-        const { id } = req.params;
-        try {
-            const deletedTicket = await Ticket.findByIdAndDelete(id);
-            if (!deletedTicket) {
-                return res.status(404).json({ message: 'Ticket not found' });
-            }
-            return res.json({ message: 'Ticket deleted successfully' });
-        } catch (error: any) {
-            return res.status(500).json({ error: error.message || 'Failed to delete ticket' });
-        }
+
+static async deleteTicket(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    console.log(`Received ID for deletion: ${id}`);
+    
+    if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({ message: "Invalid ticket ID format" });
     }
+
+    try {
+        const deletedTicket = await Ticket.findByIdAndDelete(id);
+        if (!deletedTicket) {
+            return res.status(404).json({ message: "Ticket not found" });
+        }
+        return res.json({ message: "Ticket deleted successfully" });
+    } catch (error: any) {
+        console.error("Error during deletion:", error);
+        return res.status(500).json({ error: error.message || "Failed to delete ticket" });
+    }
+}
+
+    
 }
 
 export default TicketController;

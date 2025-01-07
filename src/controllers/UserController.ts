@@ -2,9 +2,13 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const saltRounds = 10;
-const JWT_SECRET = process.env.JWT_SECRET ?? 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_jwt_secret';
 
 class UserController {
     // Helper method for error handling
@@ -13,60 +17,53 @@ class UserController {
     }
 
     // Register a new user
-static async register(req: Request, res: Response): Promise<Response | void> {
-    const { username, email, password, role } = req.body;
-    try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const newUser = new User({ username, email, password: hashedPassword,role: role });
-        await newUser.save();
-        console.log(`User registered: ${username}, Email: ${email}`);
-        return res.status(201).json({ message: 'User registered successfully' });
-    } catch (error: any) {
-        return UserController.handleError(res, error, 400);
-    }
-}
-
-// Login a user
-static async login(req: Request, res: Response): Promise<Response | void> {
-    const { email, password } = req.body;
-    try {
-      // Find the user by email
-      const user = await User.findOne({ email });
-      if (!user) return res.status(404).json({ message: 'User not found' });
-
-      // Compare the provided password with the stored hashed password
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
-
-      // Generate a JWT token
-      const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-
-      // Exclude the password field from the user object
-      const { password: _, ...userData } = user.toObject();
-
-      // Return the token and user details
-      return res.json({ token, user: userData });
-    } catch (error: any) {
-      // Handle any errors
-      return res.status(500).json({ error: error.message || 'An error occurred' });
-    }
-  }
-
-
-// Get all users
-static async getAllUsers(req: Request, res: Response): Promise<Response | void> {
-    try {
-        const users = await User.find();  // Fetch all users from the database
-        if (!users || users.length === 0) {
-            return res.status(404).json({ message: 'No users found' });  // Handle case if no users exist
+    static async register(req: Request, res: Response): Promise<Response | void> {
+        const { username, email, password, role } = req.body;
+        try {
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            const newUser = new User({ username, email, password: hashedPassword, role });
+            await newUser.save();
+            console.log(`User registered: ${username}, Email: ${email}`);
+            return res.status(201).json({ message: 'User registered successfully' });
+        } catch (error: any) {
+            return UserController.handleError(res, error, 400);
         }
-        return res.json(users);  // Return the list of users
-    } catch (error: any) {
-        UserController.handleError(res, error);  // Use existing error handler
     }
-}
+
+    // Login a user
+    static async login(req: Request, res: Response): Promise<Response | void> {
+        const { email, password } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if (!user) return res.status(404).json({ message: 'User not found' });
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+
+            const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+            const { password: _, ...userData } = user.toObject();
+
+            return res.json({ token, user: userData });
+        } catch (error: any) {
+            return res.status(500).json({ error: error.message || 'An error occurred' });
+        }
+    }
+
+    // Get all users
+    static async getAllUsers(req: Request, res: Response): Promise<Response | void> {
+        try {
+            const users = await User.find();
+            if (!users || users.length === 0) {
+                return res.status(404).json({ message: 'No users found' });
+            }
+            return res.json(users);
+        } catch (error: any) {
+            UserController.handleError(res, error);
+        }
+    }
+
     // Get user by ID
-    static async getUser(req: Request, res: Response): Promise<Response | void>{
+    static async getUser(req: Request, res: Response): Promise<Response | void> {
         const { id } = req.params;
         try {
             const user = await User.findById(id);
@@ -83,13 +80,11 @@ static async getAllUsers(req: Request, res: Response): Promise<Response | void> 
         const { username, email, password } = req.body;
         try {
             const hashedPassword = password ? await bcrypt.hash(password, saltRounds) : undefined;
-
             const updatedUser = await User.findByIdAndUpdate(
                 id,
                 { username, email, ...(hashedPassword && { password: hashedPassword }) },
-                { new: true } // Return updated document
+                { new: true }
             );
-
             if (!updatedUser) return res.status(404).json({ message: 'User not found' });
             res.json(updatedUser);
         } catch (error: any) {
@@ -117,7 +112,6 @@ static async getAllUsers(req: Request, res: Response): Promise<Response | void> 
             if (!user) return res.status(404).json({ message: 'User not found' });
 
             const resetToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '15m' });
-            // Placeholder for sending resetToken to user's email
             res.json({ message: 'Password reset link has been sent', resetToken });
         } catch (error: any) {
             UserController.handleError(res, error);
@@ -125,7 +119,7 @@ static async getAllUsers(req: Request, res: Response): Promise<Response | void> 
     }
 
     // Reset Password
-    static async resetPassword(req: Request, res: Response): Promise<void> {
+    static async resetPassword(req: Request, res: Response): Promise<Response | void> {
         const { resetToken, newPassword } = req.body;
         try {
             const decoded: any = jwt.verify(resetToken, JWT_SECRET);

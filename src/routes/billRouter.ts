@@ -23,4 +23,9 @@ router.put('/:userId/update-address', (req: Request, res: Response) => {
     BillController.updateBillingAddress(req, res);
 });
 
+router.delete('/:id',(req:Request,res:Response) =>{
+    BillController.deleteBillingRecord(req,res);
+});
+
+
 export default router;
